@@ -11,7 +11,7 @@ Name:		perl-Date-Pcalc
 Version:	1.2
 Release:	3
 # same as perl
-License:	GPL or Artistic
+License:	GPL v1+ or Artistic
 Group:		Development/Languages/Perl
 Source0:	http://www.cpan.org/modules/by-module/%{pdir}/%{pdir}-%{pnam}-%{version}.tar.gz
 # Source0-md5:	1c09a09337c7d2e18a17898ca577c644
