@@ -5,12 +5,13 @@
 %include	/usr/lib/rpm/macros.perl
 %define	pdir	Date
 %define	pnam	Pcalc
-Summary:	Perl module Date::Pcalc
-Summary(pl):	Modu³ perla Date::Pcalc
+Summary:	Date::Pcalc Perl module - Gregorian calendar date calculations
+Summary(pl):	Modu³ Perla Date::Pcalc - obliczenia na datach wg kalendarza gregoriañskiego
 Name:		perl-Date-Pcalc
 Version:	1.2
 Release:	1
-License:	(enter GPL/LGPL/BSD/BSD-like/Artistic/other license name here)
+# same as perl
+License:	GPL or Artistic
 Group:		Development/Languages/Perl
 Source0:	http://www.cpan.org/modules/by-module/%{pdir}/%{pdir}-%{pnam}-%{version}.tar.gz
 # Source0-md5:	1c09a09337c7d2e18a17898ca577c644
@@ -28,6 +29,13 @@ calculations based on the Gregorian calendar (the one used in all
 western countries today), thereby complying with all relevant norms
 and standards: ISO/R 2015-1971, DIN 1355 and, to some extent, ISO 8601
 (where applicable).
+
+%description -l pl
+Ten pakiet zawiera modu³ Perla do wszystkich rodzajów obliczeñ na
+datach opartych na kalendarzu gregoriañskim (u¿ywanym aktualnie we
+wszystkich pañstwach zachodnich) w sposób zgodny z odpowiednimi
+normami i standardami: ISO/R 2015-1971, DIN 1355 i, w pewnym zakresie,
+ISO 8601.
 
 %prep
 %setup -q -n %{pdir}-%{pnam}-%{version}
