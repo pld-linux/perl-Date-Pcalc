@@ -3,8 +3,8 @@
 %bcond_without	tests	# do not perform "make test"
 #
 %include	/usr/lib/rpm/macros.perl
-%define	pdir	Date
-%define	pnam	Pcalc
+%define		pdir	Date
+%define		pnam	Pcalc
 Summary:	Date::Pcalc Perl module - Gregorian calendar date calculations
 Summary(pl):	Modu³ Perla Date::Pcalc - obliczenia na datach wg kalendarza gregoriañskiego
 Name:		perl-Date-Pcalc
