@@ -6,7 +6,7 @@
 %define		pdir	Date
 %define		pnam	Pcalc
 Summary:	Date::Pcalc Perl module - Gregorian calendar date calculations
-Summary(pl):	Modu≥ Perla Date::Pcalc - obliczenia na datach wg kalendarza gregoriaÒskiego
+Summary(pl.UTF-8):   Modu≈Ç Perla Date::Pcalc - obliczenia na datach wg kalendarza gregoria≈Ñskiego
 Name:		perl-Date-Pcalc
 Version:	1.2
 Release:	3
@@ -30,10 +30,10 @@ western countries today), thereby complying with all relevant norms
 and standards: ISO/R 2015-1971, DIN 1355 and, to some extent, ISO 8601
 (where applicable).
 
-%description -l pl
-Ten pakiet zawiera modu≥ Perla do wszystkich rodzajÛw obliczeÒ na
-datach opartych na kalendarzu gregoriaÒskim (uøywanym aktualnie we
-wszystkich paÒstwach zachodnich) w sposÛb zgodny z odpowiednimi
+%description -l pl.UTF-8
+Ten pakiet zawiera modu≈Ç Perla do wszystkich rodzaj√≥w oblicze≈Ñ na
+datach opartych na kalendarzu gregoria≈Ñskim (u≈ºywanym aktualnie we
+wszystkich pa≈Ñstwach zachodnich) w spos√≥b zgodny z odpowiednimi
 normami i standardami: ISO/R 2015-1971, DIN 1355 i, w pewnym zakresie,
 ISO 8601.
 
