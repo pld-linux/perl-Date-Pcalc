@@ -6,7 +6,7 @@
 %define		pdir	Date
 %define		pnam	Pcalc
 Summary:	Date::Pcalc Perl module - Gregorian calendar date calculations
-Summary(pl.UTF-8):   Moduł Perla Date::Pcalc - obliczenia na datach wg kalendarza gregoriańskiego
+Summary(pl.UTF-8):	Moduł Perla Date::Pcalc - obliczenia na datach wg kalendarza gregoriańskiego
 Name:		perl-Date-Pcalc
 Version:	1.2
 Release:	3
