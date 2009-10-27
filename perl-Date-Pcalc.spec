@@ -8,17 +8,20 @@
 Summary:	Date::Pcalc Perl module - Gregorian calendar date calculations
 Summary(pl.UTF-8):	Moduł Perla Date::Pcalc - obliczenia na datach wg kalendarza gregoriańskiego
 Name:		perl-Date-Pcalc
-Version:	6.0
+Version:	6.1
 Release:	1
 # same as perl
 License:	GPL v1+ or Artistic
 Group:		Development/Languages/Perl
 Source0:	http://www.cpan.org/modules/by-module/%{pdir}/%{pdir}-%{pnam}-%{version}.tar.gz
-# Source0-md5:	9cfadc732eef84045783bc10a2dbe2cf
+# Source0-md5:	6a719d8fe10ac673be5d09e003130aa8
 URL:		http://catcode.com/date/pcalc.html
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	rpm-perlprov >= 4.1-13
-BuildArch:	noarch
+%if %{with tests}
+BuildRequires:	perl-Bit-Vector >= 7.1
+BuildRequires:	perl-Carp-Clan >= 5.3
+%endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_noautoreq	'perl(anything_fake_or_conditional)'
@@ -43,8 +46,9 @@ ISO 8601.
 %build
 %{__perl} Makefile.PL \
 	INSTALLDIRS=vendor
-
-%{__make}
+%{__make} \
+	CC="%{__cc}" \
+	OPTIMIZE="%{rpmcflags}"
 
 %{?with_tests:%{__make} test}
 
@@ -54,16 +58,24 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
+install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
+cp -a examples $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
+cp -a tools $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc CHANGES.txt README.txt EXAMPLES.txt
-%{perl_vendorlib}/Date/Pcalc.pm
-%dir %{perl_vendorlib}/Date/Pcalc
-%{perl_vendorlib}/Date/Pcalc/Object.pm
-%{perl_vendorlib}/Date/Pcalendar.pm
-%dir %{perl_vendorlib}/Date/Pcalendar
-%{perl_vendorlib}/Date/Pcalendar/*.pm
+%doc CHANGES.txt CREDITS.txt INSTALL.txt README.txt EXAMPLES.txt
+%{perl_vendorarch}/Date/*.pm
+%dir %{perl_vendorarch}/Date/Pcalc
+%{perl_vendorarch}/Date/Pcalc/Object.pm
+%{perl_vendorarch}/Date/Pcalendar.pm
+%dir %{perl_vendorarch}/Date/Pcalendar
+%{perl_vendorarch}/Date/Pcalendar/*.pm
+%dir %{perl_vendorarch}/auto/Date/Pcalc
+%{perl_vendorarch}/auto/Date/Pcalc/*.bs
+%attr(755,root,root) %{perl_vendorarch}/auto/Date/Pcalc/*.so
 %{_mandir}/man3/*
+%{_examplesdir}/%{name}-%{version}
