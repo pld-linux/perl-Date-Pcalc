@@ -9,12 +9,13 @@ Summary:	Date::Pcalc Perl module - Gregorian calendar date calculations
 Summary(pl.UTF-8):	Moduł Perla Date::Pcalc - obliczenia na datach wg kalendarza gregoriańskiego
 Name:		perl-Date-Pcalc
 Version:	6.1
-Release:	4
+Release:	5
 # same as perl
 License:	GPL v1+ or Artistic
 Group:		Development/Languages/Perl
 Source0:	http://www.cpan.org/modules/by-module/%{pdir}/%{pdir}-%{pnam}-%{version}.tar.gz
 # Source0-md5:	6a719d8fe10ac673be5d09e003130aa8
+Patch0:		build.patch
 URL:		http://catcode.com/date/pcalc.html
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	rpm-perlprov >= 4.1-13
@@ -42,6 +43,7 @@ ISO 8601.
 
 %prep
 %setup -q -n %{pdir}-%{pnam}-%{version}
+%patch0 -p1
 
 %build
 %{__perl} Makefile.PL \
@@ -69,7 +71,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc CHANGES.txt CREDITS.txt INSTALL.txt README.txt EXAMPLES.txt
 %dir %{perl_vendorarch}/Date
-%{perl_vendorarch}/Date/*.pm
+%{perl_vendorarch}/Date/Pcalc.pm
 %dir %{perl_vendorarch}/Date/Pcalc
 %{perl_vendorarch}/Date/Pcalc/Object.pm
 %{perl_vendorarch}/Date/Pcalendar.pm

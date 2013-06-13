@@ -1,0 +1,745 @@
+--- Date-Pcalc-6.1/src/C_XS/ToolBox.h~	2013-06-13 17:00:05.523968595 +0200
++++ Date-Pcalc-6.1/src/C_XS/ToolBox.h	2013-06-13 17:00:31.110914002 +0200
+@@ -93,7 +93,7 @@
+     #elif PERL_DARWIN
+         #define boolean bool
+     #else
+-        typedef enum { false = FALSE, true = TRUE } boolean;
++        typedef enum { _false = FALSE, _true = TRUE } boolean;
+     #endif
+ #endif
+ 
+--- Date-Pcalc-6.1/src/C_XS/DatePcalc.c~	2013-06-13 17:00:05.523968595 +0200
++++ Date-Pcalc-6.1/src/C_XS/DatePcalc.c	2013-06-13 17:01:19.212809930 +0200
+@@ -689,8 +689,8 @@
+ {
+     N_int i = (N_int) c;
+ 
+-    if ((i >= 0x30) and (i <= 0x39)) return(true);
+-    return(false);
++    if ((i >= 0x30) and (i <= 0x39)) return(_true);
++    return(_false);
+ }
+ 
+ static boolean DateCalc_is_alnum(N_char c)
+@@ -703,8 +703,8 @@
+         ((i >= 0xC0) and (i <= 0xD6)) or
+         ((i >= 0xD8) and (i <= 0xF6)) or
+         ((i >= 0xF8) and (i <= 0xFF)))
+-            return(true);
+-    return(false);
++            return(_true);
++    return(_false);
+ }
+ 
+ N_char DateCalc_ISO_LC(N_char c)
+@@ -742,14 +742,14 @@
+ {   /* Mnemonic: COBOL "PIC 9" */
+     if ((str != NULL) and (idx >= 0) and (idx < len))
+         return( DateCalc_is_digit(str[idx]) XOR neg );
+-    return(false);
++    return(_false);
+ }
+ 
+ static boolean DateCalc_scanx(charptr str, Z_int len, Z_int idx, boolean neg)
+ {   /* Mnemonic: COBOL "PIC X" */
+     if ((str != NULL) and (idx >= 0) and (idx < len))
+         return( DateCalc_is_alnum(str[idx]) XOR neg );
+-    return(false);
++    return(_false);
+ }
+ 
+ static Z_int DateCalc_Str2Int(charptr string, Z_int length)
+@@ -877,16 +877,16 @@
+         (month >= 1) and (month <= 12) and
+         (day >= 1) and
+         (day <= DateCalc_Days_in_Month_[DateCalc_leap_year(year)][month]))
+-            return(true);
+-    return(false);
++            return(_true);
++    return(_false);
+ }
+ 
+ boolean DateCalc_check_time(Z_int hour, Z_int min, Z_int sec)
+ {
+     if ((hour >= 0) and (min >= 0) and (sec >= 0) and
+         (hour < 24) and (min < 60) and (sec < 60))
+-            return(true);
+-    return(false);
++            return(_true);
++    return(_false);
+ }
+ 
+ boolean DateCalc_check_business_date(Z_int year, Z_int week, Z_int dow)
+@@ -894,8 +894,8 @@
+     if ((year >= 1) and
+         (week >= 1) and (week <= DateCalc_Weeks_in_Year(year)) and
+         (dow >= 1) and (dow <= 7))
+-            return(true);
+-    return(false);
++            return(_true);
++    return(_false);
+ }
+ 
+ Z_int DateCalc_Day_of_Year(Z_int year, Z_int month, Z_int day)
+@@ -965,9 +965,9 @@
+             *week = 1;
+             (*year)++;
+         }
+-        return(true);
++        return(_true);
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ boolean DateCalc_monday_of_week(Z_int  week,
+@@ -994,14 +994,14 @@
+         (mm < 1) or (mm > 12) or
+         (dow < 1) or (dow > 7) or
+         (n < 1) or (n > 5))
+-        return(false);
++        return(_false);
+     first = DateCalc_Day_of_Week(*year,mm,1);
+     if (dow < first) dow += 7;
+     delta = (Z_long) (dow - first);
+     delta += (n-1) * 7L;
+     if (DateCalc_add_delta_days(year,month,day,delta) and (*month == mm))
+-        return(true);
+-    return(false);
++        return(_true);
++    return(_false);
+ }
+ 
+ boolean DateCalc_standard_to_business(Z_int *year,  Z_int *week, Z_int *dow,
+@@ -1012,9 +1012,9 @@
+     if (DateCalc_week_of_year(week,year,month,day))
+     {
+         *dow = DateCalc_Day_of_Week(yy,month,day);
+-        return(true);
++        return(_true);
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ boolean DateCalc_business_to_standard(Z_int *year, Z_int *month, Z_int *day,
+@@ -1030,7 +1030,7 @@
+         delta = ((week + (first > 4) - 1) * 7L) + (dow - first);
+         return( DateCalc_add_delta_days(year,month,day,delta) );
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ Z_long DateCalc_Delta_Days(Z_int year1, Z_int month1, Z_int day1,
+@@ -1058,9 +1058,9 @@
+         *Dh = (Z_int) HH;
+         *Dm = (Z_int) MM;
+         *Ds = (Z_int) SS;
+-        return(true);
++        return(_true);
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ boolean DateCalc_delta_dhms(Z_long *Dd,
+@@ -1079,7 +1079,7 @@
+                                    hour1,min1,sec1,
+                                    hour2,min2,sec2) );
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ boolean DateCalc_delta_ymd(Z_int *year1, Z_int *month1, Z_int *day1,
+@@ -1091,9 +1091,9 @@
+         *day1   = day2   - *day1;
+         *month1 = month2 - *month1;
+         *year1  = year2  - *year1;
+-        return(true);
++        return(_true);
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ boolean DateCalc_delta_ymdhms(Z_int *D_y,   Z_int *D_m,    Z_int *D_d,
+@@ -1106,14 +1106,14 @@
+     Z_long Dd;
+ 
+     if (not DateCalc_delta_ymd(&year1,&month1,&day1, year2,month2,day2))
+-        return(false);
++        return(_false);
+     Dd = (Z_long) day1;
+     if (not DateCalc_delta_hms(&Dd,Dh,Dm,Ds, hour1,min1,sec1, hour2,min2,sec2))
+-        return(false);
++        return(_false);
+     *D_y = year1;
+     *D_m = month1;
+     *D_d = (Z_int) Dd;
+-    return(true);
++    return(_true);
+ }
+ 
+ boolean DateCalc_norm_delta_ymd(Z_int *year1, Z_int *month1, Z_int *day1,
+@@ -1136,26 +1136,26 @@
+         {
+             Dy = (Z_long) (year2  - *year1);
+             Dm = (Z_long) (month2 - *month1);
+-            ty=*year1; tm=*month1; td=*day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td);
++            ty=*year1; tm=*month1; td=*day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(_false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td);
+             if (!(((Dy >= 0L) and (Dm >= 0L) and (Dd >= 0L)) or
+                   ((Dy <= 0L) and (Dm <= 0L) and (Dd <= 0L))))
+             {
+                 if      ((Dy < 0L) and (Dm > 0L)) { Dy++; Dm -= 12L; }
+                 else if ((Dy > 0L) and (Dm < 0L)) { Dy--; Dm += 12L; }
+-                if      ((Dm < 0L) and (Dd > 0L)) { Dm++; ty=*year1; tm=*month1; td=*day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
+-                else if ((Dm > 0L) and (Dd < 0L)) { Dm--; ty=*year1; tm=*month1; td=*day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
++                if      ((Dm < 0L) and (Dd > 0L)) { Dm++; ty=*year1; tm=*month1; td=*day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(_false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
++                else if ((Dm > 0L) and (Dd < 0L)) { Dm--; ty=*year1; tm=*month1; td=*day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(_false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
+                 if      ((Dy < 0L) and (Dd > 0L)) { Dy++; Dm -= 12L; }
+                 else if ((Dy > 0L) and (Dd < 0L)) { Dy--; Dm += 12L; }
+-                if      ((Dm < 0L) and (Dd > 0L)) { Dm++; ty=*year1; tm=*month1; td=*day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
+-                else if ((Dm > 0L) and (Dd < 0L)) { Dm--; ty=*year1; tm=*month1; td=*day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
++                if      ((Dm < 0L) and (Dd > 0L)) { Dm++; ty=*year1; tm=*month1; td=*day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(_false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
++                else if ((Dm > 0L) and (Dd < 0L)) { Dm--; ty=*year1; tm=*month1; td=*day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(_false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
+             }
+         }
+         *year1  = (Z_int) Dy;
+         *month1 = (Z_int) Dm;
+         *day1   = (Z_int) Dd;
+-        return(true);
++        return(_true);
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ boolean DateCalc_norm_delta_ymdhms(Z_int *D_y,   Z_int *D_m,    Z_int *D_d,
+@@ -1185,26 +1185,26 @@
+         {
+             Dy = (Z_long) (year2  - year1);
+             Dm = (Z_long) (month2 - month1);
+-            ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td);
++            ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(_false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td);
+             if (!(((Dy >= 0L) and (Dm >= 0L) and (Dd >= 0L) and (ss >= 0L)) or
+                   ((Dy <= 0L) and (Dm <= 0L) and (Dd <= 0L) and (ss <= 0L))))
+             {
+                 if      ((Dy < 0L) and (Dm > 0L)) { Dy++; Dm -= 12L; }
+                 else if ((Dy > 0L) and (Dm < 0L)) { Dy--; Dm += 12L; }
+-                if      ((Dm < 0L) and (Dd > 0L)) { Dm++; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
+-                else if ((Dm > 0L) and (Dd < 0L)) { Dm--; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
++                if      ((Dm < 0L) and (Dd > 0L)) { Dm++; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(_false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
++                else if ((Dm > 0L) and (Dd < 0L)) { Dm--; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(_false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
+                 if      ((Dy < 0L) and (Dd > 0L)) { Dy++; Dm -= 12L; }
+                 else if ((Dy > 0L) and (Dd < 0L)) { Dy--; Dm += 12L; }
+-                if      ((Dm < 0L) and (Dd > 0L)) { Dm++; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
+-                else if ((Dm > 0L) and (Dd < 0L)) { Dm--; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
++                if      ((Dm < 0L) and (Dd > 0L)) { Dm++; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(_false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
++                else if ((Dm > 0L) and (Dd < 0L)) { Dm--; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(_false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
+                 if      ((Dd < 0L) and (ss > 0L)) { Dd++; ss -= 86400L; }
+                 else if ((Dd > 0L) and (ss < 0L)) { Dd--; ss += 86400L; }
+-                if      ((Dm < 0L) and (ss > 0L)) { Dm++; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
+-                else if ((Dm > 0L) and (ss < 0L)) { Dm--; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
++                if      ((Dm < 0L) and (ss > 0L)) { Dm++; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(_false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
++                else if ((Dm > 0L) and (ss < 0L)) { Dm--; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(_false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
+                 if      ((Dy < 0L) and (ss > 0L)) { Dy++; Dm -= 12L; }
+                 else if ((Dy > 0L) and (ss < 0L)) { Dy--; Dm += 12L; }
+-                if      ((Dm < 0L) and (ss > 0L)) { Dm++; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
+-                else if ((Dm > 0L) and (ss < 0L)) { Dm--; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
++                if      ((Dm < 0L) and (ss > 0L)) { Dm++; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(_false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
++                else if ((Dm > 0L) and (ss < 0L)) { Dm--; ty=year1; tm=month1; td=day1; if (!DateCalc_add_delta_ym(&ty,&tm,&td,Dy,Dm)) return(_false); Dd=d2-DateCalc_Date_to_Days(ty,tm,td); }
+                 if      ((Dd < 0L) and (ss > 0L)) { Dd++; ss -= 86400L; }
+                 else if ((Dd > 0L) and (ss < 0L)) { Dd--; ss += 86400L; }
+             }
+@@ -1224,9 +1224,9 @@
+         *Dhh    = (Z_int) hh;
+         *Dmm    = (Z_int) mm;
+         *Dss    = (Z_int) ss;
+-        return(true);
++        return(_true);
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ boolean DateCalc_add_delta_days(Z_int *year, Z_int *month, Z_int *day,
+@@ -1262,9 +1262,9 @@
+                 }
+             }
+         }
+-        return(true);
++        return(_true);
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ boolean DateCalc_add_delta_dhms(Z_int *year, Z_int *month, Z_int *day,
+@@ -1295,7 +1295,7 @@
+         else *hour = *min = *sec = 0;
+         return( DateCalc_add_delta_days(year,month,day,Dd) );
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ boolean DateCalc_add_year_month(Z_int *year, Z_int *month,
+@@ -1303,7 +1303,7 @@
+ {
+     Z_long quot;
+ 
+-    if ((*year < 1) or (*month < 1) or (*month > 12)) return(false);
++    if ((*year < 1) or (*month < 1) or (*month > 12)) return(_false);
+     if (Dm != 0L)
+     {
+         Dm  += (Z_long) (*month - 1);
+@@ -1322,8 +1322,8 @@
+         Dy += (Z_long) *year;
+         *year = (Z_int) Dy;
+     }
+-    if (*year < 1) return(false);
+-    return(true);
++    if (*year < 1) return(_false);
++    return(_true);
+ }
+ 
+ boolean DateCalc_add_delta_ym(Z_int *year, Z_int *month, Z_int *day,
+@@ -1331,19 +1331,19 @@
+ {
+     Z_int Dd;
+ 
+-    if (not DateCalc_check_date(*year,*month,*day)) return(false);
+-    if (not DateCalc_add_year_month(year,month,Dy,Dm)) return(false);
++    if (not DateCalc_check_date(*year,*month,*day)) return(_false);
++    if (not DateCalc_add_year_month(year,month,Dy,Dm)) return(_false);
+     if (*day >
+         (Dd = DateCalc_Days_in_Month_[DateCalc_leap_year(*year)][*month]))
+             *day = Dd;
+-    return(true);
++    return(_true);
+ }
+ 
+ boolean DateCalc_add_delta_ymd(Z_int *year, Z_int *month, Z_int *day,
+                                Z_long Dy,   Z_long Dm,    Z_long Dd)
+ {
+-    if (not DateCalc_check_date(*year,*month,*day)) return(false);
+-    if (not DateCalc_add_year_month(year,month,Dy,Dm)) return(false);
++    if (not DateCalc_check_date(*year,*month,*day)) return(_false);
++    if (not DateCalc_add_year_month(year,month,Dy,Dm)) return(_false);
+     Dd += (Z_long) (*day - 1);
+     *day = 1;
+     return( DateCalc_add_delta_days(year,month,day,Dd) );
+@@ -1355,8 +1355,8 @@
+                                   Z_long Dh,   Z_long Dm,    Z_long Ds)
+ {
+     if (not (DateCalc_check_date(*year,*month,*day) and
+-             DateCalc_check_time(*hour,*min,*sec))) return(false);
+-    if (not  DateCalc_add_year_month(year,month,D_y,D_m)) return(false);
++             DateCalc_check_time(*hour,*min,*sec))) return(_false);
++    if (not  DateCalc_add_year_month(year,month,D_y,D_m)) return(_false);
+     D_d += (Z_long) (*day - 1);
+     *day = 1;
+     return( DateCalc_add_delta_dhms(year,month,day,hour,min,sec,D_d,Dh,Dm,Ds) );
+@@ -1365,7 +1365,7 @@
+ boolean DateCalc_add_norm_delta_ymd(Z_int *year, Z_int *month, Z_int *day,
+                                     Z_long Dy,   Z_long Dm,    Z_long Dd)
+ {
+-    if (not DateCalc_add_delta_ym(year,month,day,Dy,Dm)) return(false);
++    if (not DateCalc_add_delta_ym(year,month,day,Dy,Dm)) return(_false);
+     return( DateCalc_add_delta_days(year,month,day,Dd) );
+ }
+ 
+@@ -1374,7 +1374,7 @@
+                                        Z_long D_y,  Z_long D_m,   Z_long D_d,
+                                        Z_long Dh,   Z_long Dm,    Z_long Ds)
+ {
+-    if (not DateCalc_add_delta_ym(year,month,day,D_y,D_m)) return(false);
++    if (not DateCalc_add_delta_ym(year,month,day,D_y,D_m)) return(_false);
+     return( DateCalc_add_delta_dhms(year,month,day,hour,min,sec,D_d,Dh,Dm,Ds) );
+ }
+ 
+@@ -1406,10 +1406,10 @@
+                 if (*dst < 0) *dst = -1;
+                 else          *dst =  1;
+             }
+-            return(true);
++            return(_true);
+         }
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ boolean DateCalc_gmtime(Z_int  *year, Z_int *month, Z_int *day,
+@@ -1435,9 +1435,9 @@
+             if (*dst < 0) *dst = -1;
+             else          *dst =  1;
+         }
+-        return(true);
++        return(_true);
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ boolean DateCalc_localtime(Z_int  *year, Z_int *month, Z_int *day,
+@@ -1463,9 +1463,9 @@
+             if (*dst < 0) *dst = -1;
+             else          *dst =  1;
+         }
+-        return(true);
++        return(_true);
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ /* MacOS (Classic):                                            */
+@@ -1495,7 +1495,7 @@
+          (hour  <    0) or (hour  >   23) or
+          (min   <    0) or (min   >   59) or
+          (sec   <    0) or (sec   >   59) )
+-    return(false);
++    return(_false);
+ 
+ #ifdef MACOS_TRADITIONAL
+     if ( (year == 2040) and ( (month >  2) or
+@@ -1503,14 +1503,14 @@
+                                                ( (day == 6) and ( (hour >  6) or
+                                                                 ( (hour == 6) and ( (min >  28) or
+                                                                                   ( (min == 28) and (sec > 15) ) ))))))) )
+-    return(false);
++    return(_false);
+ #else
+     if ( (year == 2038) and ( (month >  1) or
+                             ( (month == 1) and ( (day >  19) or
+                                                ( (day == 19) and ( (hour >  3) or
+                                                                  ( (hour == 3) and ( (min >  14) or
+                                                                                    ( (min == 14) and (sec > 7) ) ))))))) )
+-    return(false);
++    return(_false);
+ #endif
+ 
+     year -= 1900;
+@@ -1557,14 +1557,14 @@
+ 
+     if (when >= 0)
+     {
+-        if ((date = gmtime(&when)) == NULL) return(false);
++        if ((date = gmtime(&when)) == NULL) return(_false);
+         year1  = (*date).tm_year + 1900;
+         month1 = (*date).tm_mon + 1;
+         day1   = (*date).tm_mday;
+         hour1  = (*date).tm_hour;
+         min1   = (*date).tm_min;
+         sec1   = (*date).tm_sec;
+-        if ((date = localtime(&when)) == NULL) return(false);
++        if ((date = localtime(&when)) == NULL) return(_false);
+         year2  = (*date).tm_year + 1900;
+         month2 = (*date).tm_mon + 1;
+         day2   = (*date).tm_mday;
+@@ -1581,10 +1581,10 @@
+                 if (*dst < 0) *dst = -1;
+                 else          *dst =  1;
+             }
+-            return(true);
++            return(_true);
+         }
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ /* MacOS (Classic):                                            */
+@@ -1629,10 +1629,10 @@
+ #endif
+            (days >  DateCalc_DAYS_TO_OVFLW) or
+          ( (days == DateCalc_DAYS_TO_OVFLW) and (secs > DateCalc_SECS_TO_OVFLW) ) )
+-    return(false);
++    return(_false);
+ 
+     *seconds = (time_t) (((days - DateCalc_DAYS_TO_EPOCH) * 86400L) + secs);
+-    return(true);
++    return(_true);
+ }
+ 
+ /* Substitute for POSIX's gmtime(3) function: */
+@@ -1658,7 +1658,7 @@
+     Z_long hh;
+     Z_long dd;
+ 
+-    if (ss < 0L) return(false);
++    if (ss < 0L) return(_false);
+     dd = (Z_long) (ss / 86400L);
+     ss -= dd * 86400L;
+     mm = (Z_long) (ss / 60L);
+@@ -1693,7 +1693,7 @@
+ 
+     Z_int a, b, c, d, e, m, n;
+ 
+-    if ((*year < 1583) or (*year > 2299)) return(false);
++    if ((*year < 1583) or (*year > 2299)) return(_false);
+ 
+     if      (*year < 1700) { m = 22; n = 2; }
+     else if (*year < 1800) { m = 23; n = 3; }
+@@ -1717,7 +1717,7 @@
+     if ((*day == 26) and (*month == 4)) *day = 19;
+     if ((*day == 25) and (*month == 4) and
+         (d == 28) and (e == 6) and (a > 10)) *day = 18;
+-    return(true);
++    return(_true);
+ }
+ 
+ /*  Carnival Monday / Rosenmontag / Veille du Mardi Gras   =  easter sunday - 48  */
+@@ -1751,10 +1751,10 @@
+ 
+     if ((lang < 1) or (lang > DateCalc_LANGUAGES)) lang = DateCalc_Language;
+     month = 0;
+-    ok = true;
++    ok = _true;
+     for ( i = 1; ok and (i <= 12); i++ )
+     {
+-        same = true;
++        same = _true;
+         for ( j = 0; same and (j < length); j++ )
+         {
+             same = ( DateCalc_ISO_UC(buffer[j]) ==
+@@ -1762,7 +1762,7 @@
+         }
+         if (same)
+         {
+-            if (month > 0) ok = false;
++            if (month > 0) ok = _false;
+             else           month = i;
+         }
+     }
+@@ -1789,10 +1789,10 @@
+ 
+     if ((lang < 1) or (lang > DateCalc_LANGUAGES)) lang = DateCalc_Language;
+     day = 0;
+-    ok = true;
++    ok = _true;
+     for ( i = 1; ok and (i <= 7); i++ )
+     {
+-        same = true;
++        same = _true;
+         for ( j = 0; same and (j < length); j++ )
+         {
+             same = ( DateCalc_ISO_UC(buffer[j]) ==
+@@ -1800,7 +1800,7 @@
+         }
+         if (same)
+         {
+-            if (day > 0) ok = false;
++            if (day > 0) ok = _false;
+             else         day = i;
+         }
+     }
+@@ -1826,10 +1826,10 @@
+ /*****************************************************************************/
+ 
+     lang = 0;
+-    ok = true;
++    ok = _true;
+     for ( i = 1; ok and (i <= DateCalc_LANGUAGES); i++ )
+     {
+-        same = true;
++        same = _true;
+         for ( j = 0; same and (j < length); j++ )
+         {
+             same = ( DateCalc_ISO_UC(buffer[j]) ==
+@@ -1837,7 +1837,7 @@
+         }
+         if (same)
+         {
+-            if (lang > 0) ok = false;
++            if (lang > 0) ok = _false;
+             else          lang = i;
+         }
+     }
+@@ -1857,17 +1857,17 @@
+     if (length > 0)
+     {
+         i = 0;
+-        while (DateCalc_scan9(buffer,length,i,true)) i++;
++        while (DateCalc_scan9(buffer,length,i,_true)) i++;
+         j = length-1;
+-        while (DateCalc_scan9(buffer,length,j,true)) j--;
++        while (DateCalc_scan9(buffer,length,j,_true)) j--;
+         if (i+1 < j)        /* at least 3 chars, else error! */
+         {
+             buffer += i;
+             length = j-i+1;
+             i = 1;
+-            while (DateCalc_scan9(buffer,length,i,false)) i++;
++            while (DateCalc_scan9(buffer,length,i,_false)) i++;
+             j = length-2;
+-            while (DateCalc_scan9(buffer,length,j,false)) j--;
++            while (DateCalc_scan9(buffer,length,j,_false)) j--;
+             if (j < i)  /* only numerical chars without delimiters */
+             {
+                 switch (length)
+@@ -1903,7 +1903,7 @@
+                     *year  = DateCalc_Str2Int(buffer+4,4);
+                     break;
+                 default:
+-                    return(false);
++                    return(_false);
+                     break;
+                 }
+             }
+@@ -1911,18 +1911,18 @@
+             {
+                 *day  = DateCalc_Str2Int(buffer,i);
+                 *year = DateCalc_Str2Int(buffer+(j+1),length-(j+1));
+-                while (DateCalc_scanx(buffer,length,i,true)) i++;
+-                while (DateCalc_scanx(buffer,length,j,true)) j--;
++                while (DateCalc_scanx(buffer,length,i,_true)) i++;
++                while (DateCalc_scanx(buffer,length,j,_true)) j--;
+                 if (i <= j)         /* at least one char left for month */
+                 {
+                     buffer += i;
+                     length = j-i+1;
+                     i = 1;
+-                    while (DateCalc_scanx(buffer,length,i,false)) i++;
++                    while (DateCalc_scanx(buffer,length,i,_false)) i++;
+                     if (i >= length)    /* ok, no more delimiters */
+                     {
+                         i = 0;
+-                        while (DateCalc_scan9(buffer,length,i,false)) i++;
++                        while (DateCalc_scan9(buffer,length,i,_false)) i++;
+                         if (i >= length) /* only digits for month */
+                         {
+                             *month = DateCalc_Str2Int(buffer,length);
+@@ -1932,14 +1932,14 @@
+                             *month = DateCalc_Decode_Month(buffer,length,lang);
+                         }
+                     }
+-                    else return(false); /* delimiters inside month string */
++                    else return(_false); /* delimiters inside month string */
+                 }
+-                else return(false); /* no chars left for month */
++                else return(_false); /* no chars left for month */
+             }           /* at least one non-numerical char (i <= j) */
+         }
+-        else return(false); /* less than 3 chars in buffer */
++        else return(_false); /* less than 3 chars in buffer */
+     }
+-    else return(false); /* length <= 0 */
++    else return(_false); /* length <= 0 */
+     *year = DateCalc_Moving_Window(*year);
+     return( DateCalc_check_date(*year,*month,*day) );
+ }
+@@ -1956,17 +1956,17 @@
+     if (length > 0)
+     {
+         i = 0;
+-        while (DateCalc_scanx(buffer,length,i,true)) i++;
++        while (DateCalc_scanx(buffer,length,i,_true)) i++;
+         j = length-1;
+-        while (DateCalc_scan9(buffer,length,j,true)) j--;
++        while (DateCalc_scan9(buffer,length,j,_true)) j--;
+         if (i+1 < j)        /* at least 3 chars, else error! */
+         {
+             buffer += i;
+             length = j-i+1;
+             i = 1;
+-            while (DateCalc_scanx(buffer,length,i,false)) i++;
++            while (DateCalc_scanx(buffer,length,i,_false)) i++;
+             j = length-2;
+-            while (DateCalc_scan9(buffer,length,j,false)) j--;
++            while (DateCalc_scan9(buffer,length,j,_false)) j--;
+             if (i >= length)  /* only alphanumeric chars left */
+             {
+                 if (j < 0) /* case 0 : xxxx999999xxxx */
+@@ -2004,7 +2004,7 @@
+                         *year  = DateCalc_Str2Int(buffer+4,4);
+                         break;
+                     default:
+-                        return(false);
++                        return(_false);
+                         break;
+                     }
+                 }
+@@ -2036,7 +2036,7 @@
+                         *year = DateCalc_Str2Int(buffer+2,4);
+                         break;
+                     default:
+-                        return(false);
++                        return(_false);
+                         break;
+                     }
+                 }
+@@ -2044,7 +2044,7 @@
+             else           /* case 2 : xxxxAAAxxxx9999xxxx _OR_ */
+             {              /* case 3 : xxxxAAAxx99xx9999xx      */
+                 k = 0;     /*              0  i    j    l       */
+-                while (DateCalc_scan9(buffer,length,k,false)) k++;
++                while (DateCalc_scan9(buffer,length,k,_false)) k++;
+                 if (k >= i) /* ok, only digits */
+                 {
+                     *month = DateCalc_Str2Int(buffer,i);
+@@ -2052,16 +2052,16 @@
+                 else       /* no, some non-digits */
+                 {
+                     *month = DateCalc_Decode_Month(buffer,i,lang);
+-                    if (*month == 0) return(false);
++                    if (*month == 0) return(_false);
+                 }
+                 buffer += i;
+                 length -= i;
+                 j -= i;
+                 k = j+1; /* remember start posn of day+year(2)/year(3) */
+                 i = 1;
+-                while (DateCalc_scanx(buffer,length,i,true)) i++;
++                while (DateCalc_scanx(buffer,length,i,_true)) i++;
+                 j--;
+-                while (DateCalc_scan9(buffer,length,j,true)) j--;
++                while (DateCalc_scan9(buffer,length,j,_true)) j--;
+                 if (j < i) /* case 2 : xxxxAAAxxxx9999xxxx */
+                 {          /*                j0   i   l    */
+                     buffer += k;    /*            k        */
+@@ -2089,7 +2089,7 @@
+                         *year = DateCalc_Str2Int(buffer+2,4);
+                         break;
+                     default:
+-                        return(false);
++                        return(_false);
+                         break;
+                     }
+                 }
+@@ -2097,18 +2097,18 @@
+                 {          /*                 0 ij  k   l  */
+                     *year = DateCalc_Str2Int(buffer+k,length-k);
+                     k = i;
+-                    while (DateCalc_scan9(buffer,length,k,false)) k++;
++                    while (DateCalc_scan9(buffer,length,k,_false)) k++;
+                     if (k > j)          /* ok, only digits */
+                     {
+                         *day = DateCalc_Str2Int(buffer+i,j-i+1);
+                     }
+-                    else return(false); /* non-digits inside day */
++                    else return(_false); /* non-digits inside day */
+                 }
+             }                 /* i < length */
+         }
+-        else return(false); /* less than 3 chars in buffer */
++        else return(_false); /* less than 3 chars in buffer */
+     }
+-    else return(false); /* length <= 0 */
++    else return(_false); /* length <= 0 */
+     *year = DateCalc_Moving_Window(*year);
+     return( DateCalc_check_date(*year,*month,*day) );
+ }
+@@ -2202,7 +2202,7 @@
+             return( DateCalc_check_date(*century+*year,*month,*day) );
+         }
+     }
+-    return(false);
++    return(_false);
+ }
+ 
+ boolean DateCalc_check_compressed(Z_int date)
