@@ -79,7 +79,6 @@ rm -rf $RPM_BUILD_ROOT
 %{perl_vendorarch}/Date/Pcalendar/*.pm
 %dir %{perl_vendorarch}/auto/Date
 %dir %{perl_vendorarch}/auto/Date/Pcalc
-%{perl_vendorarch}/auto/Date/Pcalc/*.bs
 %attr(755,root,root) %{perl_vendorarch}/auto/Date/Pcalc/*.so
 %{_mandir}/man3/*
 %{_examplesdir}/%{name}-%{version}
