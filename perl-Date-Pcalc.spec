@@ -9,7 +9,7 @@ Summary:	Date::Pcalc Perl module - Gregorian calendar date calculations
 Summary(pl.UTF-8):	Moduł Perla Date::Pcalc - obliczenia na datach wg kalendarza gregoriańskiego
 Name:		perl-Date-Pcalc
 Version:	6.1
-Release:	9
+Release:	10
 # same as perl
 License:	GPL v1+ or Artistic
 Group:		Development/Languages/Perl
