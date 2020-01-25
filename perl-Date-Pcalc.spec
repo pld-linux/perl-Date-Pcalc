@@ -2,7 +2,6 @@
 # Conditional build:
 %bcond_without	tests	# do not perform "make test"
 #
-%include	/usr/lib/rpm/macros.perl
 %define		pdir	Date
 %define		pnam	Pcalc
 Summary:	Date::Pcalc Perl module - Gregorian calendar date calculations
